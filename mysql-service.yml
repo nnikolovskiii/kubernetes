@@ -2,11 +2,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
-  namespace: my-database-namespace
+  namespace: dev
 spec:
   ports:
     - port: 3306
       targetPort: 3306
   selector:
     app: mysql
-  clusterIP: None  # Headless service for StatefulSet
+  clusterIP: None
