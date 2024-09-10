@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: dev
 spec:
   replicas: 2
   selector:
@@ -15,14 +14,16 @@ spec:
     spec:
       containers:
       - name: backend
-        image: nnikolovskii/dotnet_finki_rasporedi:latest
+        image: nnikolovskii/vinozito_backend:latest
         ports:
         - containerPort: 80
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
-        - name: ConnectionStrings__DefaultConnection
-          value: Server=mysql;Port=3306;Database=finki_rasporedi;User=admin;Password=ogan123;
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        - name: ConnectionStrings__MongoDb
+          value: mongodb://my-user:example@example-mongodb-svc:27017
         resources:
           limits:
             memory: "512Mi"
