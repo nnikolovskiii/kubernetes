@@ -3,6 +3,7 @@ apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
   name: example-mongodb
+  namespace: dev
 spec:
   members: 3
   type: ReplicaSet
@@ -11,31 +12,38 @@ spec:
     authentication:
       modes: ["SCRAM"]
   users:
-    - name: my-user
+    - name: root
       db: admin
-      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+      passwordSecretRef:
         name: my-user-password
       roles:
         - name: clusterAdmin
           db: admin
         - name: userAdminAnyDatabase
           db: admin
-        - name: readWrite  # Add readWrite role to access and modify 'test' DB
+        - name: readWrite
           db: test
-        - name: readWrite  # Add readWrite role to access and modify 'test' DB
+        - name: readWrite
           db: VinozitoDB
 
       scramCredentialsSecretName: my-scram
   additionalMongodConfig:
     storage.wiredTiger.engineConfig.journalCompressor: zlib
 
-# the user credentials will be generated from this secret
-# once the credentials are generated, this secret is no longer required
 ---
+
 apiVersion: v1
 kind: Secret
 metadata:
   name: my-user-password
+  namespace: dev
 type: Opaque
 stringData:
   password: "example"
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
+  namespace: dev
 spec:
   replicas: 2
   selector:
@@ -14,16 +15,25 @@ spec:
     spec:
       containers:
       - name: backend
-        image: nnikolovskii/vinozito_backend:latest
+        image: nnikolovskii/vinozito-v1:latest
         ports:
         - containerPort: 80
         env:
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ASPNETCORE_URLS
-          value: http://+:80
-        - name: ConnectionStrings__MongoDb
-          value: mongodb://my-user:example@example-mongodb-svc:27017
+          - name: ASPNETCORE_ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: backend-config
+                key: ASPNETCORE_ENVIRONMENT
+          - name: ASPNETCORE_URLS
+            valueFrom:
+              configMapKeyRef:
+                name: backend-config
+                key: ASPNETCORE_URLS
+          - name: ConnectionStrings__MongoDb
+            valueFrom:
+              configMapKeyRef:
+                name: backend-config
+                key: MONGO_CONNECTION_STRING
         resources:
           limits:
             memory: "512Mi"
